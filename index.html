@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sir David Attenborough Kuman Kommentator</title>
+</head>
+<body>
+	<h3><img height=75 src="https://parade.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTk4NjEzNjY1NzA2OTQ0NDIz/david-attenborough-net-worth.jpg"> </br>
+	    Welcome to: </br> The Fake/AI Sir David Attenborough Human Commentary Creator by <a href="https://rickt.org">rickt</a></h3>
+
+    <video id="video" width="320" height="240" autoplay muted></video>
+    <canvas id="canvas" width="320" height="240"></canvas>
+    <br/>
+    <button id="take-photo">Take Photo</button>
+    <br>
+
+    <audio id="background-audio">
+        <source type="audio/mpeg">
+      </audio>
+
+    <p></p>
+    <div id="message-box"></div>
+
+    <script>
+        const ws = new WebSocket("wss://backend.rickt.dev:9877");
+        const messageBox = document.getElementById("message-box");
+        const messageInput = document.getElementById("message-input");
+        const messageForm = document.getElementById("message-form");
+        const sendButton = document.getElementById("send-button");
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const takePhotoButton = document.getElementById("take-photo");
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(error => {
+                console.error("Error accessing webcam:", error);
+            });
+
+        takePhotoButton.addEventListener("click", () => {
+            const context = canvas.getContext("2d");
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert canvas to image data
+            const imageData = canvas.toDataURL("image/png");  // Change format if needed
+
+            // Send image data over websocket
+            ws.send(imageData);
+        });
+
+        ws.onmessage = (event) => {
+            function startsWithHTTPS(url) {
+                return url.startsWith("https://");
+            }
+            const message = document.createElement("p");
+            message.textContent = `${event.data}`;
+            console.log("Received ", message)
+            if (startsWithHTTPS(message.textContent)) {
+                const audioElement = document.getElementById("background-audio");
+                const newSourceUrl = message.textContent;
+                audioElement.src = newSourceUrl;
+                audioElement.load();
+                audioElement.play();
+            } else {
+                messageBox.appendChild(message);
+            }
+
+        };
+
+        ws.onopen = () => {
+            console.log("Connected to wss:// websocket server");
+        };
+    </script>
+</body>
+</html>
+

@@ -53,17 +53,18 @@ def analyse_image(base64_image, script):
 
 # contains_sorry()
 def contains_sorry(text):
+  # if openai's text reponse contains a "sorry" of any kind, the analysis was no good
   return "sorry".lower() in text.lower()
 
-# decode_websocket_image()
-def decode_websocket_image(data):
+# decode_image()
+def decode_image(data):
   try:
-    # extract base64 encoded data (assumption: data starts with 'data:image/png;base64')
+    # extract base64 encoded data (assumption: png data starts with 'data:image/png;base64')
     prefix, encoded_data = data.split(",", 1)
     if prefix != "data:image/png;base64":
       raise ValueError("Invalid image data format")
 
-    # looks good, decode it
+    # looks good, we have a png, decode it
     decoded_data = base64.b64decode(encoded_data)
   except (ValueError, IndexError) as e:
     raise ValueError("Error processing image data:", e)
@@ -82,11 +83,11 @@ def decode_websocket_image(data):
 def generate_audio(text, david_id):
   # elevenlabs client
   api_key = os.environ.get('ELEVENLABS_API_KEY')
-  llclient = ElevenLabs(api_key=api_key)
+  elclient = ElevenLabs(api_key=api_key)
 
   # generate the audio
   voice = os.environ.get('SIRDAVID_VOICE')
-  audio = llclient.generate( text=text, voice=voice, model="eleven_multilingual_v2")
+  audio = elclient.generate( text=text, voice=voice, model="eleven_multilingual_v2")
 
   # write audio file to local disk
   filename = david_id + ".mp3"
@@ -119,29 +120,29 @@ def save_in_gcp(filename, type):
 
   # upload
   blob.upload_from_filename(filename, content_type=type)
-  logger.info(f"uploaded {bucket_name}/{filename}")
+  logger.info(f"uploaded {filename}")
 
 # websocket_handler()
 async def websocket_handler(websocket, path):
   # get remote info
   remote_ip, port = websocket.remote_address
-  logger.info(f"connection from {remote_ip}")
+  logger.info(f"rx hello from {remote_ip}")
   
   # send hello to remote
   message = "Please click the \"Take Photo\" button to upload a webcam photo to Sir David!!"
   await websocket.send(message)
-  logger.info(f"sent hello to {remote_ip}")
+  logger.info(f"tx hello to {remote_ip}")
 
   # process message from remote
   async for message in websocket:
     try:
       # was an image sent? try to decode it
-      image = decode_websocket_image(message)
+      image = decode_image(message)
       if image:
-        # we have an image, process it
+        # we have a valid image, process it
         fname = f"{uuid.uuid4()}"
         filename = fname + ".png"
-        logger.info(f"received image from {remote_ip}")
+        logger.info(f"rx image from {remote_ip}")
         
         # save image locally
         image.save(filename)
@@ -151,14 +152,15 @@ async def websocket_handler(websocket, path):
         # inform remote that we are processing the image
         await websocket.send("Thankyou! Sir David has received your photo and is analysing it now. Please stand by...")
 
-        # analyse the image
+        # open the image and send base64-encoded version of it to openai for analysis
         with open(filename, "rb") as image_file:
           base64_image = base64.b64encode(image_file.read()).decode("utf-8")
         analysis = analyse_image(base64_image, script=script)
+        logger.info(f"rx analysis from openai")
 
         # does the analysis contain an error?
         if contains_sorry(analysis):
-          logger.error(f"error analysing {bucket_name}/{filename}, error={analysis} ")
+          logger.error(f"error analysing {filename}, error={analysis} ")
           await websocket.send("Oops, there was a problem -- please try again!")
         else:
           # analysis is good
@@ -173,6 +175,7 @@ async def websocket_handler(websocket, path):
 
           # generate the audio
           generate_audio(analysis, fname)
+          logger.info(f"rx audio from elevenlabs")
           
           # send audio url to remote
           url = "https://storage.googleapis.com/davidattenborough/" + fname + ".mp3"
@@ -182,10 +185,9 @@ async def websocket_handler(websocket, path):
           await websocket.send(analysis)
 
           # finished
-          logger.info(f"sent audio to {remote_ip}")
-
+          logger.info(f"tx audio to {remote_ip}")
     except (ValueError, ImportError) as e:
-      # print(f"Received message: {message}")
+      # debug
       if message == "PING" or message == "ping":
           await websocket.send("PONG")     
                              

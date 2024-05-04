@@ -8,8 +8,7 @@
 </head>
 
 <body>
-    <h3><img height=75
-            src="https://parade.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTk4NjEzNjY1NzA2OTQ0NDIz/david-attenborough-net-worth.jpg">
+    <h3><img height=75 src="/david.jpg">
         </br>
         Welcome to: </br> The Fake/AI Sir David Attenborough Human Commentary Creator by <a
             href="https://rickt.org">rickt</a></h3>
@@ -28,7 +27,8 @@
     <div id="message-box"></div>
 
     <script>
-        const ws = new WebSocket("wss://backend.rickt.dev:9877");
+        const WEBSOCKET_ADDRESS = "wss://backend.rickt.dev:9877";
+        const ws = new WebSocket(WEBSOCKET_ADDRESS);
         const messageBox = document.getElementById("message-box");
         const messageInput = document.getElementById("message-input");
         const messageForm = document.getElementById("message-form");
@@ -77,7 +77,7 @@
         };
 
         ws.onopen = () => {
-            console.log("Connected to wss:// websocket server");
+            console.log("Connected to " + WEBSOCKET_ADDRESS);
         };
     </script>
 </body>

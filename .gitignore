@@ -1,9 +1,13 @@
 *.json
 *.pem
+backend.rickt.dev/
 *.mp3
 *.png
 *.log
+bin
+lib
+include
+share
+lib64
 *.cfg
 *.old
-venv
-backend.rickt.dev/

@@ -1,6 +1,15 @@
 # sirdavid
-A quick hacked-together python + html thing that will:
-* take a webcam image from a browser
-* have openai describe that image in a snarky David Attenborough-esque manner
-* have elevenlabs speak that snarky analysis in David Attenborough's voice
+Have you ever wanted David Attenborough's voice to describe the contents of a webcam photo in pseudo-real time over a secure websocket? Why not indeed! 
+
+index.html:
+* takes a snapshot of the browser's webcam
+* uploads it over secure websocket to a mini backend 
+
+main.py:
+* sets up a secure websocket listener
+* looks for a .png sent over the websocket
+* decodes the image, has it described in a snarky David Attenborough manner
+* generates audio file using a custom ElevenLabs David Attenborough voice i created 
+* plays the audio in the browser
+
 

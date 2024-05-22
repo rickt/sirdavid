@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 def analyse_image(base64_image, script):
   # create openai client
   api_key = os.environ.get('OPENAI_API_KEY')
-  client = OpenAI(api_key=api_key)
+  client = OpenAI(api_key=api_key, base_url="https://gateway.ai.cloudflare.com/v1/4d04b5bc70bf0beb540aa9676bbcabde/ricktcfaigw/openai")
 
   response = client.chat.completions.create(
     model="gpt-4-vision-preview",

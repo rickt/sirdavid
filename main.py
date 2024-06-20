@@ -92,6 +92,8 @@ def generate_audio(text, david_id):
   # write audio file to local disk
   filename = david_id + ".mp3"
   save(audio, filename)
+  
+  logger.info(f"rx audio from elevenlabs")
 
   # write audio file to gcp
   save_in_gcp(filename, "audio/mp3")
@@ -120,7 +122,7 @@ def save_in_gcp(filename, type):
 
   # upload
   blob.upload_from_filename(filename, content_type=type)
-  logger.info(f"uploaded {filename}")
+  logger.info(f"tx {filename} to gcp bucket")
 
 # websocket_handler()
 async def websocket_handler(websocket, path):
@@ -175,7 +177,6 @@ async def websocket_handler(websocket, path):
 
           # generate the audio
           generate_audio(analysis, fname)
-          logger.info(f"rx audio from elevenlabs")
           
           # send audio url to remote
           url = "https://storage.googleapis.com/davidattenborough/" + fname + ".mp3"

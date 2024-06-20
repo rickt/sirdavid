@@ -9,7 +9,7 @@ Have you ever wanted David Attenborough's voice to describe the contents of a we
 * sets up a secure websocket listener
 * looks for a .png sent over the websocket
 * if an image arrives, saves it locally and in a GCP bucket
-* decodes the image, has it described by OpenAI in a snarky David Attenborough manner
+* decodes the image, has it described by OpenAI' <code>gpt4-vision-preview</code> model in a snarky David Attenborough manner
 * generates audio file using a custom ElevenLabs David Attenborough voice i created 
 * sends the URL of the audio file to the browser
 * plays the audio in the browser

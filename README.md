@@ -18,6 +18,7 @@ Have you ever wanted David Attenborough's voice to describe the contents of a we
 You'll need to set:
 * `ELEVENLABS_API_KEY` api key for [ElevenLabs](https://elevenlabs.io)
 * `OPENAI_API_KEY` api key for OpenAI
+* `SIRDAVID_APIGW` URI pointing to (in this case) my [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/)
 * `SIRDAVID_BUCKET` name of GCP bucket to store images, text analyses & audio files
 * `SIRDAVID_PORT` port for the websocket listener
 * `SIRDAVID_SERVICEACCOUNT_JSON` path to [service account JSON](https://cloud.google.com/iam/docs/keys-create-delete) file for auth to GCP bucket

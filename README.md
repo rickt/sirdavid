@@ -1,6 +1,8 @@
 # sirdavid
 Have you ever wanted David Attenborough's voice to describe the contents of a webcam photo in pseudo-real time over a secure websocket? Why not indeed! 
 
+Live demo up at [https://sirdavid.rickt.dev](https://sirdavid.rickt.dev/)
+
 ## index.html:
 * takes a snapshot of the browser's webcam
 * uploads it over secure websocket to a mini backend 

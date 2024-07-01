@@ -34,14 +34,14 @@ def analyse_image(base64_image, script):
   api_gw = os.environ.get('SIRDAVID_APIGW')
   client = OpenAI(api_key=api_key, base_url=api_gw)
 
-
   response = client.chat.completions.create(
   model="gpt-4o",
   messages=[
     {
       "role": "user",
       "content": [
-        {"type": "text", "text": "You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary. Make it snarky and funny. Don't repeat yourself. Make it short and snappy. If the human does anything remotely interesting, make a big deal about it!"},
+        {"type": "text", 
+         "text": "You are Sir David Attenborough. Describe and narrate this image as if it is a nature documentary. Make it snarky and funny. Don't repeat yourself. Make it short and snappy. If there is a human in the image that does anything remotely interesting, make a big deal about it!"},
         {
           "type": "image_url",
           "image_url": {
@@ -52,7 +52,7 @@ def analyse_image(base64_image, script):
     }
   ],
   max_tokens=300,
-)
+  )
 
   response_text = response.choices[0].message.content
   return response_text
@@ -103,21 +103,6 @@ def generate_audio(text, david_id):
 
   # write audio file to gcp
   save_in_gcp(filename, "audio/mp3")
-
-# generate_new_line()
-def generate_new_line(base64_image):
-  return [
-      {
-          "role": "user",
-          "content": [
-              {"type": "text", "text": "Describe this image"},
-              {
-                  "type": "image_url",
-                  "image_url": f"data:image/jpeg;base64,{base64_image}",
-              },
-          ],
-      },
-  ]
 
 # save_in_gcp()
 def save_in_gcp(filename, type):

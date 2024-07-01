@@ -34,21 +34,26 @@ def analyse_image(base64_image, script):
   api_gw = os.environ.get('SIRDAVID_APIGW')
   client = OpenAI(api_key=api_key, base_url=api_gw)
 
+
   response = client.chat.completions.create(
-    model="gpt-4-vision-preview",
-    messages=[
-      {
-          "role": "system",
-          "content": """
-          You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary. Make it snarky and funny. 
-          Don't repeat yourself. Make it short and snappy. If the human does anything remotely interesting, make a big deal about it!
-          """,
-      },
-    ]
-    + script
-    + generate_new_line(base64_image),
-    max_tokens=500,
-  )
+  model="gpt-4o",
+  messages=[
+    {
+      "role": "user",
+      "content": [
+        {"type": "text", "text": "You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary. Make it snarky and funny. Don't repeat yourself. Make it short and snappy. If the human does anything remotely interesting, make a big deal about it!"},
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": f"data:image/jpeg;base64,{base64_image}"
+          },
+        },
+      ],
+    }
+  ],
+  max_tokens=300,
+)
+
   response_text = response.choices[0].message.content
   return response_text
 

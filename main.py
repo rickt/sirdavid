@@ -32,6 +32,7 @@ def analyse_image(base64_image, script):
   # create openai client
   api_key = os.environ.get('OPENAI_API_KEY')
   api_gw = os.environ.get('SIRDAVID_APIGW')
+  # use "https://api.openai.com/v1" for default openai base_url 
   client = OpenAI(api_key=api_key, base_url=api_gw)
 
   response = client.chat.completions.create(

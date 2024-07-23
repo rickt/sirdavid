@@ -36,7 +36,7 @@ def analyse_image(base64_image, script):
   client = OpenAI(api_key=api_key, base_url=api_gw)
 
   response = client.chat.completions.create(
-  model="gpt-4o",
+  model="gpt-4o-mini",
   messages=[
     {
       "role": "user",

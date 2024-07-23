@@ -11,3 +11,4 @@ share
 lib64
 *.cfg
 *.old
+*.txt

@@ -4,6 +4,7 @@ import datetime
 import logging
 import os
 import random
+import re
 import ssl
 import uuid
 import websockets
@@ -36,7 +37,7 @@ def analyse_image(base64_image, script):
   client = OpenAI(api_key=api_key, base_url=api_gw)
 
   response = client.chat.completions.create(
-  model="gpt-4o-mini",
+  model="gpt-4o",
   messages=[
     {
       "role": "user",
@@ -94,7 +95,11 @@ def generate_audio(text, david_id):
 
   # generate the audio
   voice = os.environ.get('SIRDAVID_VOICE')
-  audio = elclient.generate( text=text, voice=voice, model="eleven_multilingual_v2")
+  # strip any commentary from openai in square brackets
+  modified_text = re.sub(r'\[.*?\]', '', text)
+  # new_text = "<break time=\"1.5s\" /> " + modified_text
+  new_text = "-- --" + modified_text
+  audio = elclient.generate(text=new_text, voice=voice, model="eleven_multilingual_v2")
 
   # write audio file to local disk
   filename = david_id + ".mp3"

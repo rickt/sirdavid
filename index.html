@@ -1,34 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake/AI Sir David Attenborough Human Commentary Creator</title>
+    <title>Sir David v2</title>
 	 <script defer src="https://cloud.umami.is/script.js" data-website-id="e9407b5e-88ea-4d39-b320-cefed7a22c87"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .top-align-input {
+            padding: 0;
+            line-height: 30px;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .footer {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
+<body class="d-flex flex-column min-vh-100">
+    <div class="container flex-fill">
+        <div class="text-left my-3">
+			  <a href="/"><img src="/david.jpg" height="100px" width="100px"></a>
+            <p class="h3 fw-bold">Sir David Human Commentary Generator</p>
+        </div>
+		  <div class="text-left my-3">
+			  <video id="video" width="320" height="240" autoplay muted></video>
+			  <canvas id="canvas" width="320" height="240"></canvas>
+			  <br />
+			  <button id="take-photo">Take Photo</button>
+			  <br />
 
-<body>
-    <h3><img height=75 src="/david.jpg">
-        </br>
-        Welcome to: </br> The Fake/AI Sir David Attenborough Human Commentary Creator by <a
-            href="https://rickt.org">rickt</a></h3>
-	 Code <a href="https://github.com/rickt/sirdavid/" target="_BLANK">available here</a>. </br></br>
+			  <audio id="background-audio">
+        	  		<source type="audio/mpeg">
+    		  </audio>
 
-    <video id="video" width="320" height="240" autoplay muted></video>
-    <canvas id="canvas" width="320" height="240"></canvas>
-    <br />
-    <button id="take-photo">Take Photo</button>
-    <br>
+			  <p></p>
 
-    <audio id="background-audio">
-        <source type="audio/mpeg">
-    </audio>
+			  <div id="message-box"></div>
+        </div>
 
-    <p></p>
-    <div id="message-box"></div>
+    </div>
 
-    <script>
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 text-center">
+        <div class="container">
+            <p class="mb-0">2024 by <a href="https://rickt.dev/" class="text-body">rickt</a></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+	     <script>
         const WEBSOCKET_ADDRESS = "wss://cloud.rickt.dev:9877";
         const ws = new WebSocket(WEBSOCKET_ADDRESS);
         const messageBox = document.getElementById("message-box");
@@ -44,7 +72,6 @@
             .catch(error => {
                 console.error("Error accessing webcam:", error);
             });
-
         takePhotoButton.addEventListener("click", () => {
             const context = canvas.getContext("2d");
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -55,7 +82,6 @@
             // Send image data over websocket
             ws.send(imageData);
         });
-
         ws.onmessage = (event) => {
             function startsWithHTTPS(url) {
                 return url.startsWith("https://");
@@ -74,11 +100,10 @@
             }
 
         };
-
         ws.onopen = () => {
             console.log("Connected to " + WEBSOCKET_ADDRESS);
         };
     </script>
-</body>
 
+</body>
 </html>
